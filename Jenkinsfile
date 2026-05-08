@@ -9,6 +9,7 @@ pipeline {
         DOCKER_MIGRATION_IMAGE_NAME = 'manishvishwa801/easyshop-migration'
         DOCKER_IMAGE_TAG = "${BUILD_NUMBER}"
         GITHUB_CREDENTIALS = credentials('github-credentials')
+        GIT_REPO="  "
         GIT_BRANCH = "master"
     }
     
@@ -24,7 +25,7 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 script {
-                    clone("https://github.com/manishvishwakarma89/Three-tier-Ecommerce-project.git","master")
+                    clone(env.GIT_REPO,"master")
                 }
             }
         }
@@ -115,7 +116,7 @@ pipeline {
                         manifestsPath: 'kubernetes',
                         gitCredentials: 'github-credentials',
                         gitUserName: 'Jenkins CI',
-                        gitUserEmail: 'shubhamnath5@gmail.com'
+                        gitUserEmail: 'manish.kumar.v@ramanujan.du.ac.in'
                     )
                 }
             }
