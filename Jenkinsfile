@@ -9,7 +9,7 @@ pipeline {
         DOCKER_MIGRATION_IMAGE_NAME = 'manishvishwa801/easyshop-migration'
         DOCKER_IMAGE_TAG = "${BUILD_NUMBER}"
         GITHUB_CREDENTIALS = credentials('github-credentials')
-        GIT_REPO="  "
+        GIT_REPO="https://github.com/manishvishwakarma89/Three-tier-Ecommerce-project.git"
         GIT_BRANCH = "master"
     }
     
