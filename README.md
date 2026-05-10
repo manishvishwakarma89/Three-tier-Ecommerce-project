@@ -3,8 +3,7 @@
 A production-ready 3-tier e-commerce application with complete CI/CD automation, GitOps deployment, and observability.
 
 ## 🏗️ Architecture
-
-<img width="1280" height="800" alt="block-diag" src="https://github.com/user-attachments/assets/3e545382-cab0-4b1a-a602-86bf91dbd56c" />
+<img width="1800" height="1171" alt="image" src="https://github.com/user-attachments/assets/a9db830f-9c9c-4efd-a1b0-1d06b2a772a0" />
 
 
 
