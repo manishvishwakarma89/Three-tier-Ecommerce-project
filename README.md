@@ -4,7 +4,9 @@ A production-ready 3-tier e-commerce application with complete CI/CD automation,
 
 ## 🏗️ Architecture
 
-[Insert your architecture diagram here - use the one I created for you!]
+<img width="1280" height="800" alt="block-diag" src="https://github.com/user-attachments/assets/3e545382-cab0-4b1a-a602-86bf91dbd56c" />
+
+
 
 ## 🚀 Technologies Used
 
@@ -53,6 +55,7 @@ A production-ready 3-tier e-commerce application with complete CI/CD automation,
 ## 📸 Screenshots
 
 [Add screenshots of your deployment pipeline, monitoring dashboards, etc.]
+
 
 ## 🎯 Learning Outcomes
 
