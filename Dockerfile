@@ -13,8 +13,10 @@ COPY package*.json ./
 # Install dependencies
 RUN npm ci
 
+
 # Copy all project files
 COPY . .
+
 
 # Build the Next.js application
 RUN npm run build
@@ -25,14 +27,22 @@ FROM node:18-alpine AS runner
 # Set working directory
 WORKDIR /app
 
+# Set environment variables
+ENV NODE_ENV=production
+ENV PORT=3000
+
+#create a non-root user
+RUN addgroup -S 1001 appgroup && \
+adduser -S appuser -u 1001
+
+
 # Copy necessary files from builder stage
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
-# Set environment variables
-ENV NODE_ENV=production
-ENV PORT=3000
+# SWITCH USER
+USER appuser
 
 # Expose the port the app runs on
 EXPOSE 3000
