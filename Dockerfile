@@ -1,7 +1,6 @@
-# Stage 1: Development/Build Stage
-FROM node:18-alpine AS builder
+# Stage 1: Build Stage
+FROM dhi.io/node:26-alpine-dev AS builder
 
-# Set working directory
 WORKDIR /app
 
 # Install necessary build dependencies
@@ -13,39 +12,32 @@ COPY package*.json ./
 # Install dependencies
 RUN npm ci
 
-
 # Copy all project files
 COPY . .
-
 
 # Build the Next.js application
 RUN npm run build
 
-# Stage 2: Production Stage
-FROM node:18-alpine AS runner
+#RUN npm run test
 
-# Set working directory
+
+# Stage 2: Production Stage
+FROM dhi.io/node:26-alpine
+
 WORKDIR /app
 
-# Set environment variables
 ENV NODE_ENV=production
 ENV PORT=3000
 
-#create a non-root user
-RUN addgroup -S 1001 appgroup && \
-adduser -S appuser -u 1001
+# DHI runtime images run as nonroot (UID 65532) by default
+# Copy necessary files from builder stage with proper ownership
+COPY --chown=65532:65532 --from=builder /app/.next/standalone ./
+COPY --chown=65532:65532 --from=builder /app/.next/static ./.next/static
+COPY --chown=65532:65532 --from=builder /app/public ./public
 
+# Create writable directories for Next.js cache and temp files
+RUN mkdir -p /app/.next/cache /app/tmp && chown -R 65532:65532 /app
 
-# Copy necessary files from builder stage
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/public ./public
-
-# SWITCH USER
-USER appuser
-
-# Expose the port the app runs on
 EXPOSE 3000
 
-# Command to run the application
 CMD ["node", "server.js"]

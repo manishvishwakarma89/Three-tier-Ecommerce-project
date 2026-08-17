@@ -1,13 +1,14 @@
-version: '3.8'
-
 services:
   mongodb:
-    image: mongo:latest
+    image: mongo:8.2
     container_name: easyshop-mongodb
     ports:
-      - "27017:27017"
+      - "27018:27017"
     volumes:
       - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-}
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
@@ -16,6 +17,15 @@ services:
       start_period: 30s
     networks:
       - easyshop-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+    security_opt:
+      - no-new-privileges:true
 
   migration:
     build:
@@ -29,14 +39,21 @@ services:
         condition: service_healthy
     networks:
       - easyshop-network
+    restart: on-failure
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+    security_opt:
+      - no-new-privileges:true
 
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: manishvishwa801/easyshop-frontend:dhi
     container_name: easyshop
     ports:
-      - "3000:3000"
+      - "3001:3000"
     env_file:
       - .env.local
     depends_on:
@@ -45,11 +62,36 @@ services:
     networks:
       - easyshop-network
     restart: unless-stopped
+    pull_policy: missing
+    volumes:
+      - next_cache:/app/.next/cache
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
 
 networks:
   easyshop-network:
     name: easyshop-network
+    driver: bridge
 
 volumes:
   mongodb_data:
     name: mongodb_data
+  next_cache:
+    name: next_cache
